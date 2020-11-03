@@ -74,12 +74,12 @@ Demo application consisting of two Ktor microservices instrumented with [ktor-op
 
 ## Steps 
 
-1. Import [ktor-opentracing](https://github.com/zopaUK/ktor-opentracing) and the [Java Jaeger client](https://github.com/jaegertracing/jaeger-client-java).
+1. Import [ktor-opentracing](https://github.com/zopaUK/ktor-opentracing) and the [Java Jaeger client](https://github.com/jaegertracing/jaeger-client-java) ([commit](https://github.com/fstien/ktor-opentracing-span-naming-demo/commit/a80f28719890330dc7cf0fc9de645e69724179b2)).
 
         implementation "io.jaegertracing:jaeger-client:1.3.2"
         implementation "com.zopa:ktor-opentracing:0.1.1"
 
-2. Instantiate a tracer and register it in [GlobalTracer](https://opentracing.io/guides/java/tracers/).
+2. Instantiate a tracer and register it in [GlobalTracer](https://opentracing.io/guides/java/tracers/) ([commit](https://github.com/fstien/ktor-opentracing-span-naming-demo/commit/54d7775b1d38d4a19b060c57a8be166d485a7774)).
 
         val tracer = Configuration("earthquake-stats")
             .withSampler(Configuration.SamplerConfiguration.fromEnv()
@@ -96,21 +96,21 @@ Demo application consisting of two Ktor microservices instrumented with [ktor-op
         
         GlobalTracer.registerIfAbsent(tracer)
 
-3. Install the `OpenTracingServer` feature into the application call pipeline.
+3. Install the `OpenTracingServer` feature into the application call pipeline ([commit](https://github.com/fstien/ktor-opentracing-span-naming-demo/commit/bc82ba2239d0ec6c19a899ad334376b8ff7dfb33)).
 
         install(OpenTracingServer)
         
-4. Install the `OpenTracingClient` feature onto the http client. 
+4. Install the `OpenTracingClient` feature onto the http client ([commit](https://github.com/fstien/ktor-opentracing-span-naming-demo/commit/bc329cd63eb2bd85fdab82158d111f5db8467bd0)). 
 
         install(OpenTracingClient)
 
-5. Instrument method calls using the `span` helper function.
+5. Instrument method calls using the `span` helper function ([commit](https://github.com/fstien/ktor-opentracing-span-naming-demo/commit/7e0cf72743760ec1f863017fd6da4c0427390778)).
 
         = span {
 
     From the lamdba expression passed to `span`, you can add tags or logs to the span by calling `setTag()` or `log()`.
 
-6. In the `build.gradle`, add a task to copy the content of the `src` directory into an `intermediate` directory, then replace `span {` with `span(classAndMethodName(this, object {})) {` and `import com.zopa.ktor.opentracing.span` with `import com.zopa.ktor.opentracing.*`. The replacements import the `classAndMethodName` from `ktor-opentracing` and passes a call to it to the `span` function. This will name our span after the class and method name. 
+6. In the `build.gradle`, add a task to copy the content of the `src` directory into an `intermediate` directory, then replace `span {` with `span(classAndMethodName(this, object {})) {` and `import com.zopa.ktor.opentracing.span` with `import com.zopa.ktor.opentracing.*`. The replacements import the `classAndMethodName` from `ktor-opentracing` and passes a call to it to the `span` function. This will name our span after the class and method name ([commit](https://github.com/fstien/ktor-opentracing-span-naming-demo/commit/36c0abb050d085b9f01337c14f5a8811708aecd2)). 
 
         task copyIntoIntermediateAndReplaceSpanName(type: Copy) {
                 from 'src/'
@@ -121,13 +121,13 @@ Demo application consisting of two Ktor microservices instrumented with [ktor-op
 
    Run this task manually to ensure that the copying and replacement works as expected. 
 
-7. Set the source directory to be the directory to which the code was copied. This tells gradle to use to compile the source code in the `intermediate` directory when the build task is run.
+7. Set the source directory to be the directory to which the code was copied. This tells gradle to use to compile the source code in the `intermediate` directory when the build task is run ([commit](https://github.com/fstien/ktor-opentracing-span-naming-demo/commit/74592b4bd8220daf0fd48e2f42a64f35a1b6d77f)).
 
         sourceSets {
                 main.kotlin.srcDirs = ['intermediate/']
         }
 
-8. Configure IntelliJ to use the `src` directory for source code syntax highlighting. By default, only the source directory defined in the sourceSets above is highlighted. Hence without this configuration, you will no longer get syntax highlighting of your code. 
+8. Configure IntelliJ to use the `src` directory for source code syntax highlighting. By default, only the source directory defined in the sourceSets above is highlighted. Hence without this configuration, you will no longer get syntax highlighting of your code ([commit](https://github.com/fstien/ktor-opentracing-span-naming-demo/commit/571d11d07ebe7718a94d8f360696c280912f225e)). 
 
         apply plugin: 'idea'
         
@@ -139,14 +139,14 @@ Demo application consisting of two Ktor microservices instrumented with [ktor-op
                 }
         }
 
-9. Configure the `copyIntoIntermediateAndReplaceSpanName` task to run prior to compilation. 
+9. Configure the `copyIntoIntermediateAndReplaceSpanName` task to run prior to compilation ([commit](https://github.com/fstien/ktor-opentracing-span-naming-demo/commit/d5dc916aa3919baccdbcd561b281091d886df270)). 
 
         compileKotlin.dependsOn ":copyIntoIntermediateAndReplaceSpanName"
 
    This ensures that the `intermediate` directory is present and contains the modified source code when the build task compiles our application. 
 
 
-10. Finally, delete the `intermediate` directory after compilation as it is no longer needed. 
+10. Finally, delete the `intermediate` directory after compilation as it is no longer needed ([commit](https://github.com/fstien/ktor-opentracing-span-naming-demo/commit/b8e28f4aeb1295d89290e6d1432dd0c3f6aa6c97)). 
 
         task deleteIntermediate(type: Delete) {
                 delete "intermediate"
