@@ -58,3 +58,9 @@ idea {
 }
 
 compileKotlin.dependsOn ":copyIntoIntermediateAndReplaceSpanName"
+
+task deleteIntermediate(type: Delete) {
+    delete "intermediate"
+}
+
+compileKotlin.finalizedBy(deleteIntermediate)
