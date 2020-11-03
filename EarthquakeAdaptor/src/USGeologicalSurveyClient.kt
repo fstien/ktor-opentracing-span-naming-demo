@@ -15,7 +15,7 @@ import java.time.LocalDateTime
 import java.util.*
 
 class USGeologicalSurveyClient {
-    val client = HttpClient(Apache) {
+    private val client = HttpClient(Apache) {
         install(JsonFeature) {
             serializer = JacksonSerializer {}
         }

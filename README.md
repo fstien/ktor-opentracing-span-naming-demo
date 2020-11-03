@@ -81,7 +81,7 @@ Demo application consisting of two Ktor microservices instrumented with [ktor-op
 
 2. Instantiate a tracer and register it in [GlobalTracer](https://opentracing.io/guides/java/tracers/).
 
-        val tracer = Configuration("tracing-example")
+        val tracer = Configuration("earthquake-stats")
             .withSampler(Configuration.SamplerConfiguration.fromEnv()
                 .withType(ConstSampler.TYPE)
                 .withParam(1))
