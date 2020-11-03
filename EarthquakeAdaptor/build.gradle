@@ -16,7 +16,7 @@ version '0.0.1'
 mainClassName = "io.ktor.server.netty.EngineMain"
 
 sourceSets {
-    main.kotlin.srcDirs = ['src']
+    main.kotlin.srcDirs = ['intermediate']
     main.resources.srcDirs = ['resources']
 }
 
@@ -49,3 +49,4 @@ task copyIntoIntermediateAndReplaceSpanName(type: Copy) {
     filter { line -> line.replaceAll('span\\s+[{]', 'span(classAndMethodName(this, object {})) {') }
     filter { line -> line.replaceAll('import com.zopa.ktor.opentracing.span', 'import com.zopa.ktor.opentracing.*') }
 }
+
