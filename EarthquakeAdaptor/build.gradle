@@ -56,3 +56,5 @@ idea {
         sourceDirs = [file('src')].toSet()
     }
 }
+
+compileKotlin.dependsOn ":copyIntoIntermediateAndReplaceSpanName"
