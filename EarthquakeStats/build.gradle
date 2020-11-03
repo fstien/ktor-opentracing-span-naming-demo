@@ -42,3 +42,10 @@ dependencies {
     implementation "io.jaegertracing:jaeger-client:1.3.2"
     implementation "com.zopa:ktor-opentracing:0.1.1"
 }
+
+task copyIntoIntermediateAndReplaceSpanName(type: Copy) {
+    from 'src/'
+    into 'intermediate/isrc/'
+    filter { line -> line.replaceAll('span\\s+[{]', 'span(classAndMethodName(this, object {})) {') }
+    filter { line -> line.replaceAll('import com.zopa.ktor.opentracing.span', 'import com.zopa.ktor.opentracing.*') }
+}
