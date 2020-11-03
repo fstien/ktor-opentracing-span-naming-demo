@@ -2,6 +2,7 @@ package com.github.fstien
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.zopa.ktor.opentracing.OpenTracingClient
+import com.zopa.ktor.opentracing.span
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.engine.apache.*
@@ -22,7 +23,7 @@ class USGeologicalSurveyClient {
         install(OpenTracingClient)
     }
 
-    suspend fun getAll(): List<Earthquake> {
+    suspend fun getAll(): List<Earthquake> = span {
         val date = LocalDateTime.now().toLocalDate()
 
         val call: HttpStatement = client.get("https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=$date")

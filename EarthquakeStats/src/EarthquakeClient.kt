@@ -1,6 +1,7 @@
 package com.github.fstien
 
 import com.zopa.ktor.opentracing.OpenTracingClient
+import com.zopa.ktor.opentracing.span
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.engine.apache.*
@@ -18,7 +19,7 @@ class EarthquakeClient {
         install(OpenTracingClient)
     }
 
-    suspend fun getAll(): List<Earthquake> {
+    suspend fun getAll(): List<Earthquake> = span {
         val call: HttpStatement = client.get("http://localhost:8081/earthquakes")
 
         val earthquakeResponse: List<Earthquake> = call.execute {
@@ -31,19 +32,19 @@ class EarthquakeClient {
         return earthquakeResponse
     }
 
-    suspend fun getLatest(): Earthquake {
+    suspend fun getLatest(): Earthquake = span {
         val earthquakes = getAll()
         val latest = earthquakes.first()
         return latest
     }
 
-    suspend fun getBiggest(): Earthquake {
+    suspend fun getBiggest(): Earthquake = span {
         val earthquakes = getAll()
         val biggest = earthquakes.sortedBy { it.magnitude }.last()
         return biggest
     }
 
-    suspend fun getBiggerThan(threshold: Double): List<Earthquake> {
+    suspend fun getBiggerThan(threshold: Double): List<Earthquake> = span {
         val earthquakes = getAll()
         val biggerThan = earthquakes.filter { it.magnitude > threshold }
         return biggerThan
